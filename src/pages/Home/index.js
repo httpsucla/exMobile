@@ -5,7 +5,7 @@ import {View, Text, StyleSheet} from 'react-native'
 export default function Home() {
   return (
       <View style={styles.container}>
-        <Text style={styles.title}>Exercício 3 Mobile</Text>
+        <Text style={styles.title}>Exercício 4 Mobile</Text>
       </View>
   );
 }

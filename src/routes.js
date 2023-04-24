@@ -6,6 +6,7 @@ import Media from "./pages/Media";
 import ListaAluno from "./pages/ListaAluno";
 import Contador from "./pages/Contador";
 import Galeria from "./pages/Galeria";
+import Api from "./pages/Api";
 
 const Tab = createBottomTabNavigator();
 
@@ -39,6 +40,7 @@ export default function Routes() {
             }}/>
             <Tab.Screen name="Contador" component={Contador}/> 
             <Tab.Screen name="Galeria" component={Galeria}/> 
+            <Tab.Screen name="Api" component={Api} />
         </Tab.Navigator>
     )
 }
