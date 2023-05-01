@@ -7,24 +7,27 @@ export default function Api() {
     const [parametro, setParametro] = useState('');
     const [data, setData] = useState([]);
 
-    function handleParametroChange(parametro) { setParametro(parametro) };
+    function handleParametroChange(parametro) { setParametro(parametro); searchApi(parametro) };
 
-    async function searchApi(query){
+    async function searchApi(query) {
+
         try {
-            const response = await api.get(`${query}`, {
+            const response = await api().get('?brand='+ query ,{
                 headers: {
                     Accept: "application/json",
-                    "User-Agent": "axios 0.21.1"
+                    "User-Agent": "axios 0.21.1",
+                    'Content-Type': 'application/json'
                   }
             });
-            console.log(query)
-            return response;
-            
-          } catch (error) {
-            console.error(error); // Tratar erros de chamada da API
+            setData(response.data)
+            return response.data;
+
+        } catch (error) {
+       
             throw error;
-          }
+        }
     }
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Pesquisar por Maquiagem</Text>
@@ -32,16 +35,13 @@ export default function Api() {
                 <Text>Filtro:</Text>
                 <TextInput
                     style={styles.input}
-                    placeholder="Parametro"
+                    placeholder="Marca"
                     clearButtonMode="always"
                     onChangeText={handleParametroChange}
                     value={parametro}
                     returnKeyType='done'
                 />
-                <TouchableOpacity style={styles.button} onPress={searchApi(parametro)}>
-                    <Text style={styles.buttonText}>Realizar busca</Text>
-                </TouchableOpacity>
-
+           
                 {
                     data.length > 0 ?
                         <FlatList
@@ -51,9 +51,9 @@ export default function Api() {
                             renderItem={({ item }) => (
                                 <View style={styles.campolista}>
                                     <View style={styles.campoconteudo}>
-                                        <Text style={{ fontSize: 18, fontWeight: '600' }}>Nome: {item.name}</Text>
-                                        <Text style={{ fontSize: 18, fontWeight: '600' }}>Preço: {item.price}</Text>
-                                        <Text style={{ fontSize: 18, fontWeight: '600' }}>Marca: {item.brand}</Text>
+                                        <Text style={{ fontSize: 16 }}>Nome: {item.name}</Text>
+                                        <Text style={{ fontSize: 16 }}>Marca: {item.brand}</Text>
+                                        <Text style={{ fontSize: 16 }}>Preço: ${item.price}</Text>
                                     </View >
                                 </View>
                             )}
@@ -115,20 +115,16 @@ const styles = StyleSheet.create({
     },
     lista: {
         flex: 1,
-        marginTop: 10,
-        width: '90%',
-        padding: 20
+        marginVertical: 10,
+        width: '100%',
     },
     campolista: {
         flexDirection: 'column',
-        marginTop: 5,
-        height: 100,
+        paddingVertical: 10,
         backgroundColor: '#fff',
-        borderColor: '#292929f3',
-        borderWidth: 2,
-        borderRadius: 15,
+        borderColor: '#dedede',
+        borderBottomWidth: 1,
         flex: 1,
-        marginBottom: 10
     },
     campoconteudo: {
         flexDirection: 'column',
