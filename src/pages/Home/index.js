@@ -35,6 +35,7 @@ export default function Home({ navigation }) {
     };
   }
 
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Exercício 5 Mobile</Text>
