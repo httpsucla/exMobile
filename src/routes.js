@@ -1,5 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createStackNavigator } from "@react-navigation/stack";
 
 import Home from "./pages/Home";
 import Media from "./pages/Media";
@@ -7,10 +8,27 @@ import ListaAluno from "./pages/ListaAluno";
 import Contador from "./pages/Contador";
 import Galeria from "./pages/Galeria";
 import Api from "./pages/Api";
+import Passagem from "./pages/Home/passagem";
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function Routes() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen
+                name="Voltar"
+                component={HomeTabs}
+                options={{ headerShown: false }} />
+            <Stack.Screen
+                name="Passagem"
+                component={Passagem} />
+        </Stack.Navigator>
+
+    )
+}
+
+function HomeTabs() {
     return (
         <Tab.Navigator
         screenOptions={{
