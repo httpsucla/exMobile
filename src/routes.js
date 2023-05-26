@@ -6,6 +6,7 @@ import Media from "./pages/Media";
 import ListaAluno from "./pages/ListaAluno";
 import Contador from "./pages/Contador";
 import Galeria from "./pages/Galeria";
+import ListaSQLite from "./pages/ListaSQLite";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +38,10 @@ export default function Routes() {
             options={{
                 title: "Lista de alunos"
             }}/>
+            <Tab.Screen name="ListaSQLite" component={ListaSQLite}
+            options={{
+                title: "Lista SQLite"
+            }} />
             <Tab.Screen name="Contador" component={Contador}/> 
             <Tab.Screen name="Galeria" component={Galeria}/> 
         </Tab.Navigator>
