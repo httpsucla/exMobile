@@ -8,6 +8,9 @@ import ListaAluno from "./pages/ListaAluno";
 import Contador from "./pages/Contador";
 import Galeria from "./pages/Galeria";
 import ListaSQLite from "./pages/ListaSQLite";
+import Passagem from "./pages/Home/passagem";
+import Api from "./pages/Api"
+import EditarNota from "./pages/Media/editar";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -22,6 +25,10 @@ export default function Routes() {
             <Stack.Screen
                 name="Passagem"
                 component={Passagem} />
+            <Stack.Screen
+                name="Editar Nota"
+                component={EditarNota}
+                 />
         </Stack.Navigator>
 
     )

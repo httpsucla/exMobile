@@ -1,23 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import Database from '../../../Database'
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, RefreshControl } from 'react-native';
+import Notas from '../../service/Notas';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default function ListaSQLite({ route, navigation }) {
 
-    const [alunos, setAlunos] = useState([]);
-
+    const [notas, setNotas] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
     useEffect(() => {
-        Database.getAlunos().then(alunos => setAlunos(alunos));
+        Notas.getNotas((notas) => {
+            setNotas(notas);
+        })
+        console.log(notas)
     }, [route]);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 1000)
+
+        Notas.getNotas((notas) => {
+            setNotas(notas)
+        });
+    }, []);
+
+    const deletarNota = (item) => {
+        Alert.alert(
+            "Atenção",
+            'Você tem certeza que deseja excluir a nota: ' + item.nome + '?',
+            [{
+                text: "Não",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            {
+                text: "Sim",
+                onPress: () => {
+                    Notas.deleteNota(item.id);
+                    Alert.alert('Sucesso', 'Nota ' + item.nome + ' foi removido com sucesso.');
+                }
+            }],
+            { cancelable: false }
+        );
+    }
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Média de todos alunos</Text>
             {
-                alunos.length > 0 ?
+                notas.length > 0 ?
                     <FlatList
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
                         style={styles.lista}
-                        data={alunos}
+                        data={notas}
                         keyExtractor={((item, index) => "Index do item" + index)}
                         renderItem={({ item }) => (
                             <View style={styles.campolista}>
@@ -25,8 +66,22 @@ export default function ListaSQLite({ route, navigation }) {
                                     <Text style={{ fontSize: 18, fontWeight: '600' }}>Nome: {item.nome}</Text>
                                     <Text style={{ fontSize: 18, fontWeight: '600' }}>Nota 1: {item.nota1}</Text>
                                     <Text style={{ fontSize: 18, fontWeight: '600' }}>Nota 2: {item.nota2}</Text>
-                                    <Text style={{ fontSize: 18, fontWeight: '600' }}>Média: {item.mediaNota}</Text>
+                                    <Text style={{ fontSize: 18, fontWeight: '600' }}>Média: {item.media}</Text>
                                 </View >
+                                <View style={styles.campoicone}>
+                                    <View style={styles.componentenumero}>
+                                        <TouchableOpacity
+                                            onPress={() =>
+                                                navigation.navigate("Editar Nota", { item: item })}>
+                                            <Icon name="edit" size={18} color={'#292929f3'} />
+                                        </TouchableOpacity>
+                                    </View >
+                                    <View style={styles.componentenumero}>
+                                        <TouchableOpacity onPress={() => deletarNota(item)}>
+                                            <Icon name="trash" size={18} color={'#292929f3'} />
+                                        </TouchableOpacity>
+                                    </View >
+                                </View>
                             </View>
                         )}
                         showsVerticalScrollIndicator={false}
@@ -58,7 +113,8 @@ const styles = StyleSheet.create({
         padding: 20
     },
     campolista: {
-        flexDirection: 'column',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginTop: 5,
         height: 100,
         backgroundColor: '#fff',
@@ -71,9 +127,17 @@ const styles = StyleSheet.create({
     campoconteudo: {
         flexDirection: 'column',
         justifyContent: 'center',
-        paddingHorizontal: 12
+        paddingHorizontal: 12,
     },
-    emptyList : {
+    campoicone: {
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    componentenumero: {
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+    },
+    emptyList: {
         fontStyle: 'italic',
         color: '#292929f3',
         fontSize: 20,

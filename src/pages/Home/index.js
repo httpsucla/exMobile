@@ -38,7 +38,7 @@ export default function Home({ navigation }) {
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Exercício 5 Mobile</Text>
+      <Text style={styles.title}>Exercício 6 Mobile</Text>
       <TouchableOpacity style={styles.authButton} onPress={handleAuthentication}>
         <Text style={styles.textButton}>Autenticar usuário</Text>
       </TouchableOpacity>

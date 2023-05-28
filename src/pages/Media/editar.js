@@ -3,51 +3,30 @@ import {
     StyleSheet, Text, View, TouchableOpacity, TextInput, Alert,
     TouchableWithoutFeedback, KeyboardAvoidingView, Keyboard, ScrollView
 } from 'react-native';
-import Database from '../../../Database';
 import Notas from '../../service/Notas';
 
-export default function Media({ navigation }) {
+export default function EditarNota({ route, navigation }) {
 
-    const [nome, setNome] = useState('');
-    const [nota1, setNota1] = useState(null);
-    const [nota2, setNota2] = useState(null);
-    const [mediaNota, setMediaNota] = useState(null)
-
-    function handleNomeChange(nome) { setNome(nome) };
-    function handleNota1Change(nota1) { setNota1(nota1) };
-    function handleNota2Change(nota2) { setNota2(nota2) };
+    const { item } = route.params
+    const [nota, setNota] = useState(item);
+    const [mediaNota, setMediaNota] = useState(null);
 
     function calcularMedia() {
-        const Media = (((parseFloat(nota1) + parseFloat(nota2)) / 2).toFixed(2))
+        const Media = (((parseFloat(nota.nota1) + parseFloat(nota.nota2)) / 2).toFixed(2))
         setMediaNota(Media)
     }
 
-    async function handleButton() {
-        const listAluno = {
-            id: new Date().getTime(),
-            nome,
-            nota1: parseFloat(nota1),
-            nota2: parseFloat(nota2),
-            mediaNota: parseFloat(mediaNota)
-        };
-        console.log(listAluno);
-        Database.saveAluno(listAluno).then(res => navigation.navigate("ListaAluno", listAluno));
-    }
-
-    cadastrarNota = () => {
+    editar = () => {
         const data = {
-            nome,
-            nota1: parseFloat(nota1),
-            nota2: parseFloat(nota2),
-            media: parseFloat(mediaNota)
+            nome: nota.nome,
+            nota1: parseFloat(nota.nota1),
+            nota2: parseFloat(nota.nota2),
+            media: parseFloat(mediaNota),
+            id: nota.id
         };
-        console.log(data)
-        Notas.addNota(data, () => {
-            Alert.alert('Sucesso', 'Nota adicionada com sucesso.');
-            setNome('');
-            setNota1(null);
-            setNota2(null);
-            setMediaNota(null);
+
+        Notas.updateNota(data, () => {
+            Alert.alert('Sucesso', 'Nota atualizada com sucesso.');
             navigation.navigate("ListaSQLite", data);
         });
     }
@@ -60,14 +39,14 @@ export default function Media({ navigation }) {
                     style={styles.container}
                 >
 
-                    <Text style={styles.title}>Calcular média do aluno</Text>
+                    <Text style={styles.title}>Alterar nota do aluno</Text>
                     <View style={styles.inputContainer}>
                         <TextInput
                             style={styles.input}
                             placeholder="Nome"
                             clearButtonMode="always"
-                            onChangeText={handleNomeChange}
-                            value={nome}
+                            onChangeText={nome => setNota({ ...nota, nome })}
+                            value={nota.nome}
                             returnKeyType='done'
                         />
                         <TextInput
@@ -75,8 +54,8 @@ export default function Media({ navigation }) {
                             placeholder="Nota 1"
                             clearButtonMode="always"
                             inputMode="decimal"
-                            onChangeText={handleNota1Change}
-                            value={nota1}
+                            onChangeText={nota1 => setNota({ ...nota, nota1 })}
+                            value={String(nota.nota1)}
                             returnKeyType='done'
                         />
                         <TextInput
@@ -84,8 +63,8 @@ export default function Media({ navigation }) {
                             placeholder="Nota 2"
                             clearButtonMode="always"
                             inputMode="decimal"
-                            onChangeText={handleNota2Change}
-                            value={nota2}
+                            onChangeText={nota2 => setNota({ ...nota, nota2 })}
+                            value={String(nota.nota2)}
                             returnKeyType='done'
                         />
                         <TouchableOpacity style={styles.button} onPress={calcularMedia}>
@@ -96,10 +75,7 @@ export default function Media({ navigation }) {
                             <Text style={styles.resultMedia}>Média do aluno: {mediaNota}</Text>
                             : null
                         }
-                        <TouchableOpacity style={styles.buttonLista} onPress={handleButton}>
-                            <Text style={styles.buttonText}>Lista AsyncStorage</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonLista} onPress={cadastrarNota}>
+                        <TouchableOpacity style={styles.buttonLista} onPress={editar}>
                             <Text style={styles.buttonText}>Lista SQLite</Text>
                         </TouchableOpacity>
                     </View>
